@@ -1,0 +1,38 @@
+schema_version: 1
+
+module:
+  name: nsx-utils
+  type: runtime
+  version: "0.1.0"
+
+support:
+  ambiqsuite: true
+  zephyr: false
+
+build:
+  cmake:
+    package: nsx_utils
+    targets:
+      - nsx::utils
+
+depends:
+  required:
+    - nsx-core
+    - nsx-soc-hal
+  optional:
+    - nsx-harness
+
+compatibility:
+  boards:
+    - "*"
+  socs:
+    - apollo3
+    - apollo3p
+    - apollo4l
+    - apollo4p
+    - apollo5b
+    - apollo510
+    - apollo510b
+    - apollo330P
+  toolchains:
+    - arm-none-eabi-gcc
