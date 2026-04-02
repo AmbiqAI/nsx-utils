@@ -4,9 +4,12 @@
 
 Contents:
 - timers and timing helpers
-- PMU and performance profiling helpers
 - energy and power measurement helpers
 - optional heap helpers used by selected integrations
+
+Performance and PMU profiling helpers now live in:
+- `nsx-perf`
+- `nsx-pmu-armv8m`
 
 Public interfaces live in `includes-api/`. The module is CMake-first and intended
 to be vendored into generated apps.
