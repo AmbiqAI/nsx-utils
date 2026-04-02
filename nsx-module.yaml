@@ -9,6 +9,24 @@ support:
   ambiqsuite: true
   zephyr: false
 
+summary: Shared utility helpers for common runtime tasks that do not justify a more specialized module.
+
+capabilities:
+  - utilities
+  - shared_helpers
+  - common_runtime_support
+
+use_cases:
+  - small cross-cutting helper needs
+  - shared support code across app modules
+  - utility functionality broader than one peripheral or board
+
+agent_keywords:
+  - utils
+  - helpers
+  - common
+  - shared
+
 build:
   cmake:
     package: nsx_utils

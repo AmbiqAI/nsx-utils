@@ -33,6 +33,10 @@ file(GLOB nsx_utils_arch_sources CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_LIST_DIR}/src/${NSX_UTILS_ARCH_DIR}/*.cpp
 )
 
+if(TARGET nsx_pmu_armv8m)
+    list(FILTER nsx_utils_arch_sources EXCLUDE REGEX ".*/ns_pmu_(utils|accumulator)\\.c$")
+endif()
+
 add_library(nsx_utils STATIC
     ${nsx_utils_common_sources}
     ${nsx_utils_arch_sources}
