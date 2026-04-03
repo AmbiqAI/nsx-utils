@@ -96,13 +96,14 @@ ns_ring_buffer_push(ns_ring_buffer_t *psBuffer, void *pvSource, uint32_t ui32Byt
     uint32_t ui32Capacity     = psBuffer->ui32Capacity;
     uint8_t *pui8Source       = (uint8_t *)pvSource;
     uint32_t ui32TempLen;
+    volatile uint32_t ui32Primask;
 
     if (bFullCheck) {
-        AM_CRITICAL_BEGIN;
+        ui32Primask = am_hal_interrupt_master_disable();
 
         // Refuse entirely when the buffer is already full.
         if (ns_ring_buffer_full(psBuffer)) {
-            AM_CRITICAL_END;
+            am_hal_interrupt_master_set(ui32Primask);
             return 0;
         }
 
@@ -133,11 +134,11 @@ ns_ring_buffer_push(ns_ring_buffer_t *psBuffer, void *pvSource, uint32_t ui32Byt
         memcpy((void *)&psBuffer->pui8Data[ui32Tail], pui8Source, ui32CopyLen);
         psBuffer->ui32Tail = (ui32Tail + ui32CopyLen) % ui32Capacity;
 
-        AM_CRITICAL_END;
+        am_hal_interrupt_master_set(ui32Primask);
         return ui32ReturnLen;
     } else {
         // No full check: overwrite oldest data when the buffer fills up.
-        AM_CRITICAL_BEGIN;
+        ui32Primask = am_hal_interrupt_master_disable();
 
         if (ns_ring_buffer_empty(psBuffer)) {
             if (ui32CopyLen >= ui32Capacity) {
@@ -168,7 +169,7 @@ ns_ring_buffer_push(ns_ring_buffer_t *psBuffer, void *pvSource, uint32_t ui32Byt
             psBuffer->ui32Head = ui32Tail;
         }
 
-        AM_CRITICAL_END;
+        am_hal_interrupt_master_set(ui32Primask);
         return ui32ReturnLen;
     }
 }
@@ -180,8 +181,10 @@ ns_ring_buffer_pop(ns_ring_buffer_t *psBuffer, void *pvDest, uint32_t ui32Bytes)
     uint32_t ui32Capacity   = psBuffer->ui32Capacity;
     uint8_t *pui8Dest       = (uint8_t *)pvDest;
     uint32_t ui32TempLen;
+    uint32_t ui32ReturnLen;
+    volatile uint32_t ui32Primask;
 
-    AM_CRITICAL_BEGIN;
+    ui32Primask = am_hal_interrupt_master_disable();
 
     // If an overwrite occurred, advance the read pointer to the write pointer
     // before we start reading so the data we return is consistent.
@@ -191,7 +194,7 @@ ns_ring_buffer_pop(ns_ring_buffer_t *psBuffer, void *pvDest, uint32_t ui32Bytes)
 
     // Clamp to available data.
     uint32_t ui32CopyLen = ui32Bytes < ui32Available ? ui32Bytes : ui32Available;
-    uint32_t ui32ReturnLen = ui32CopyLen;
+    ui32ReturnLen = ui32CopyLen;
 
     while ((ui32Head + ui32CopyLen) >= ui32Capacity) {
         ui32TempLen = ui32Capacity - ui32Head;
@@ -205,7 +208,7 @@ ns_ring_buffer_pop(ns_ring_buffer_t *psBuffer, void *pvDest, uint32_t ui32Bytes)
     psBuffer->ui32Head = (ui32Head + ui32CopyLen) % ui32Capacity;
     psBuffer->ui32Overwrite = 0;
 
-    AM_CRITICAL_END;
+    am_hal_interrupt_master_set(ui32Primask);
     return ui32ReturnLen;
 }
 
