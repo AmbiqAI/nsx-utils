@@ -20,16 +20,26 @@
         #define NS_MALLOC_HEAP_SIZE_IN_K 16
     #endif
 
+    // Ambiq/CMSIS headers include overloaded MVE intrinsics in C++ mode.
+    // Keep them out of any caller-provided extern "C" block.
     #ifdef __cplusplus
-extern "C" {
+extern "C++" {
     #endif
-    #include "FreeRTOS.h"
     #include "am_bsp.h"
     #include "am_mcu_apollo.h"
     #include "am_util.h"
+    #ifdef __cplusplus
+}
+    #endif
+
+    #include "FreeRTOS.h"
     #include "portable.h"
     #include "portmacro.h"
     #include "rtos.h"
+
+    #ifdef __cplusplus
+extern "C" {
+    #endif
 
 // extern alignas(4) uint8_t ucHeap[NS_MALLOC_HEAP_SIZE_IN_K * 1024];
 

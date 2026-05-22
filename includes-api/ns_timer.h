@@ -16,14 +16,23 @@
 #ifndef NS_TIMER
     #define NS_TIMER
 
+    // Ambiq/CMSIS headers include overloaded MVE intrinsics in C++ mode.
+    // Keep them out of any caller-provided extern "C" block.
     #ifdef __cplusplus
-extern "C" {
+extern "C++" {
     #endif
-
     #include "am_bsp.h"
     #include "am_mcu_apollo.h"
     #include "am_util.h"
+    #ifdef __cplusplus
+}
+    #endif
+
     #include "ns_core.h"
+
+    #ifdef __cplusplus
+extern "C" {
+    #endif
 
     #define NS_TIMER_V0_0_1                                                                        \
         { .major = 0, .minor = 0, .revision = 1 }

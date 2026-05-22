@@ -50,15 +50,24 @@
 #ifndef NS_ENERGY_MON
     #define NS_ENERGY_MON
 
+    // Ambiq/CMSIS headers include overloaded MVE intrinsics in C++ mode.
+    // Keep them out of any caller-provided extern "C" block.
     #ifdef __cplusplus
-extern "C" {
+extern "C++" {
     #endif
-
     #include "am_bsp.h"
     #include "am_mcu_apollo.h"
     #include "am_util.h"
+    #ifdef __cplusplus
+}
+    #endif
+
     #include "ns_core.h"
     #include "ns_ambiqsuite_harness.h"
+
+    #ifdef __cplusplus
+extern "C" {
+    #endif
 
 #if defined(AM_PART_APOLLO3) || defined(AM_PART_APOLLO3P)
     #define NS_POWER_MONITOR_GPIO_0 22
