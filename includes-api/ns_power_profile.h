@@ -49,9 +49,18 @@
 #ifndef NS_POWER_PROFILE_H
 #define NS_POWER_PROFILE_H
 
+// Ambiq/CMSIS headers include overloaded MVE intrinsics in C++ mode.
+// Keep them out of any caller-provided extern "C" block.
+#ifdef __cplusplus
+extern "C++" {
+#endif
 #include "am_bsp.h"
 #include "am_mcu_apollo.h"
 #include "am_util.h"
+#ifdef __cplusplus
+}
+#endif
+
 #include <stdbool.h>
 #include <stdint.h>
 
